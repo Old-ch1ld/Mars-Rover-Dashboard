@@ -133,11 +133,6 @@ const Rovers = (rovers) => {
 
 // function to create photo gallery
 const ImagesShow = (images) => {
-    // let content = "";
-    // images.forEach((i) => {
-    //     content += Image(i);
-    // });
-
     const content = images.map((i) => Image(i)).join("\n");
 
     return `
