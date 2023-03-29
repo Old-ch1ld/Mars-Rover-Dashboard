@@ -8,13 +8,13 @@ let store = Immutable.Map({
 
 const root = document.getElementById("root");
 
-// function update global state
+// function to update global state
 const updateStore = (store, newState) => {
     store = store.merge(newState);
     render(root, store);
 };
 
-// function render app html with global state
+// function to render app html with global state
 const render = async (root, state) => {
     root.innerHTML = App(state);
 };
@@ -63,19 +63,18 @@ const Loader = () => {
 
 // function to create header including back button & nav bar buttons, being shown on the photo gallery page
 const Header = (rovers) => {
+    const content = rovers
+        .map(
+            (i) =>
+                `<button type="button" class="btn btn__${i.toLowerCase()}" onclick="showTime('Curiosity')">${i}</button>`
+        )
+        .join("\n");
+
     return `
     <button class="btn btn__back" onclick="EndShowTime()">Back</button>
 
     <nav class="nav-bar">
-        <button type="button" class="btn btn__${rovers[0].toLowerCase()}" onclick="showTime('Curiosity')">${
-        rovers[0]
-    }</button>
-        <button type="button" class="btn btn__${rovers[1].toLowerCase()}" onclick="showTime('Opportunity')">${
-        rovers[1]
-    }</button>
-        <button type="button" class="btn btn__${rovers[2].toLowerCase()}" onclick="showTime('Spirit')">${
-        rovers[2]
-    }</button>
+        ${content}
     </nav>
     `;
 };
