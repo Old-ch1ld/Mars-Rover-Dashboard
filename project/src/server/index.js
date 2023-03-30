@@ -12,36 +12,30 @@ app.use(bodyParser.json());
 
 app.use("/", express.static(path.join(__dirname, "../public")));
 
-// function to get the latest images of Curiosity rover from nasa api
-app.get("/curiosity", async (req, res) => {
-    try {
-        const manifest = await (
-            await fetch(
-                "https://api.nasa.gov/mars-photos/api/v1/manifests/curiosity?api_key=zaVUmCw1578G1XNtShog6yqkm7fimstavCu1EEbt"
-            )
-        ).json();
+app.get("/:rover", async (req, res) => {
+    let { rover } = req.params;
 
-        const latestDay = manifest?.["photo_manifest"]?.["max_date"];
+    rover = rover.toLowerCase();
 
-        const images = await (
-            await fetch(
-                `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${latestDay}&api_key=${process.env.API_KEY}`
-            )
-        ).json();
+    if (
+        !(
+            rover === "curiosity" ||
+            rover === "opportunity" ||
+            rover === "spirit"
+        )
+    ) {
+        console.error(`Client is requesting the wrong rover: ${rover}`);
 
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.send({ images });
-    } catch (err) {
-        console.log("error:", err);
+        res.status(400).send({
+            message: `Client is requesting the wrong rover: ${rover}`,
+        });
+        return;
     }
-});
 
-// function to get the latest images of Opportunity rover from nasa api
-app.get("/opportunity", async (req, res) => {
     try {
         const manifest = await (
             await fetch(
-                "https://api.nasa.gov/mars-photos/api/v1/manifests/opportunity?api_key=zaVUmCw1578G1XNtShog6yqkm7fimstavCu1EEbt"
+                `https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${process.env.API_KEY}`
             )
         ).json();
 
@@ -49,31 +43,7 @@ app.get("/opportunity", async (req, res) => {
 
         const images = await (
             await fetch(
-                `https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?earth_date=${latestDay}&api_key=${process.env.API_KEY}`
-            )
-        ).json();
-
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.send({ images });
-    } catch (err) {
-        console.log("error:", err);
-    }
-});
-
-// function to get the latest images of Spirit rover from nasa api
-app.get("/spirit", async (req, res) => {
-    try {
-        const manifest = await (
-            await fetch(
-                "https://api.nasa.gov/mars-photos/api/v1/manifests/spirit?api_key=zaVUmCw1578G1XNtShog6yqkm7fimstavCu1EEbt"
-            )
-        ).json();
-
-        const latestDay = manifest?.["photo_manifest"]?.["max_date"];
-
-        const images = await (
-            await fetch(
-                `https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?earth_date=${latestDay}&api_key=${process.env.API_KEY}`
+                `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${latestDay}&api_key=${process.env.API_KEY}`
             )
         ).json();
 

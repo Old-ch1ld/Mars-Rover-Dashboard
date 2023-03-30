@@ -66,7 +66,7 @@ const Header = (rovers) => {
     const content = rovers
         .map(
             (i) =>
-                `<button type="button" class="btn btn__${i.toLowerCase()}" onclick="showTime('Curiosity')">${i}</button>`
+                `<button type="button" class="btn btn__${i.toLowerCase()}" onclick="showTime('${i}')">${i}</button>`
         )
         .join("\n");
 
@@ -91,41 +91,24 @@ const RoverShow = (rovers) => {
 
 // function to create home page rover buttons
 const Rovers = (rovers) => {
+    const content = rovers
+        .map(
+            (i) => `
+            <button class="rover-btn" title="Click to see latest images taken by ${i}" type="button" onclick="showTime('${i}')">
+                <h3 class="rover-btn__title">${i}</h3>
+
+                <img
+                    class="rover-btn__img"
+                    src="./assets/images/${i.toLowerCase()}.jpg"
+                    alt="${i} Illustration"
+                />
+            </button>`
+        )
+        .join("\n");
+
     return `
     <div class="rover-btn-box">
-        <button class="rover-btn" title="Click to see latest images taken by ${
-            rovers[0]
-        }" type="button" onclick="showTime('Curiosity')">
-            <h3 class="rover-btn__title">${rovers[0]}</h3>
-
-            <img
-                class="rover-btn__img"
-                src="./assets/images/${rovers[0].toLowerCase()}.jfif"
-                alt="${rovers[0]} Illustration"
-            />
-        </button>
-        <button class="rover-btn" title="Click to see latest images taken by ${
-            rovers[1]
-        }" type="button" onclick="showTime('Opportunity')">
-            <h3 class="rover-btn__title">${rovers[1]}</h3>
-
-            <img
-                class="rover-btn__img"
-                src="./assets/images/${rovers[1].toLowerCase()}.jpg"
-                alt="${rovers[1]} Illustration"
-            />
-        </button>
-        <button class="rover-btn" title="Click to see latest images taken by ${
-            rovers[2]
-        }" type="button" onclick="showTime('Spirit')">
-            <h3 class="rover-btn__title">${rovers[2]}</h3>
-
-            <img
-                class="rover-btn__img"
-                src="./assets/images/${rovers[2].toLowerCase()}.jpg"
-                alt="${rovers[2]} Illustration"
-            />
-        </button>
+        ${content}
     </div>
     `;
 };
@@ -183,7 +166,13 @@ const EndShowTime = () => {
 
 // function to call API to get latest images from server based on rover's name
 const getRoverImages = async (rover) => {
-    const res = await (await fetch(`http://localhost:3000/${rover}`)).json();
+    try {
+        const res = await (
+            await fetch(`http://localhost:3000/${rover}`)
+        ).json();
 
-    return res.images.photos;
+        return res.images.photos;
+    } catch (err) {
+        console.log(err);
+    }
 };
